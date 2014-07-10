@@ -1,0 +1,187 @@
+extends layout
+
+block content
+  
+  div(class='row', ng-controller='slider-controller')
+    div(class='col-md-5')
+      h2(class='header_title')= title
+      p= description 
+    div(class='col-md-2')
+      rzslider(rz-slider-model='updateFreqSlider.value', rz-slider-floor='updateFreqSlider.min', rz-slider-ceil='updateFreqSlider.max', rz-slider-translate='updateFreqSlider.translate')
+      small(class='text-muted') Refresh Rate
+    div(class='col-md-2')
+      rzslider(rz-slider-model='rangeSlider.value', rz-slider-floor='rangeSlider.min', rz-slider-ceil='rangeSlider.max', rz-slider-translate='rangeSlider.translate')
+      small(class='text-muted') Lookback Window
+    div(class='col-md-3 btn-toolbar pull-right')
+      button(type='button', id='db_config_modal_btn', data-toggle='modal', data-target='db_config_modal', class='btn btn-default') 
+        span(class='glyphicon glyphicon-cog')
+        span(class='glyphicon-class')  DB Config
+      button(type='button', id='flight_modal_btn', data-toggle='model', data-target='flight_modal', class='btn btn-default')
+        span(class='glyphicon glyphicon-send')
+        span(class='glyphicon-class')  Set Flights
+
+
+  div(class='row top-buffer', ng-controller='tab-controller')
+    ul(id='db_config', class='nav nav-pills')
+      li(id='db_config_title_{{db_config}}', ng-class='{active: $first, in: $first}', ng-repeat='(db_config, schemas) in db_configs')
+        a(href='#db_config_{{db_config}}', data-toggle='tab') 
+          span(class='glyphicon glyphicon-hdd')
+          span(class='glyphicon-class')  {{db_config}}
+    div(id='db_config_content', class='tab-content top-buffer')
+      div(class='tab-pane fade', id='db_config_{{db_config}}', ng-class='{active: $first, in: $first}', ng-repeat='(db_config, schemas) in db_configs')
+        ul(id='schema_{{db_config}}', class='nav  nav-tabs')
+          li(id='schema_title_{{db_config}}{{schema}}', ng-class='{active: $first, in: $first}', ng-repeat='(schema, flights) in schemas')
+            a(href='#schema_{{db_config}}{{schema}}', data-toggle='tab')  {{schema}}
+        div(id='schema_{{db_config}}_content', class='tab-content')
+          div(class='row tab-pane fade', id='schema_{{db_config}}{{schema}}', ng-class='{active: $first, in: $first}', ng-repeat='(schema, flights) in schemas')
+            gliderchart(flight='flight', ng-repeat='flight in flights track by $index', class='col-md-6')
+
+  // db_config_modal
+  div(class='modal fade', id='db_config_modal', tab-index='-1', role='dialog', aria-labelledby='db_config_modal_label', aria-hidden='true')
+    div(class='modal-dialog', ng-controller='db_config-controller')
+      div(class='modal-content')
+
+        div(class='modal-header')
+          button(type='button', class='close', data-dismiss='modal', aria-hidden='true') &times;
+          h4(class='modal-title', id='db_config_modal_label') Database Configurations
+
+        div(class='modal-body')
+          div(ng-repeat='db_config in db_configs track by $index')
+            div(class='panel' class='panel-{{db_config.status || "default"}}')
+              div(class='panel-heading')
+                h4(class='panel-title') 
+                  span(class='glyphicon glyphicon-hdd')
+                  span(class='glyphicon-class')  {{db_config.name}}
+                  button(type="button", class="close", ng-click='deleteDBConfig($index, db_config)') ×
+              div(class='panel-body')
+                div(class='row') 
+                 div(class='col-md-2') Name:
+                 div(class='col-md-6')
+                   a(href='#', onaftersave='updateDBConfig(db_config)', editable-text='db_config.name', e-style='width:200px;', onbeforesave='checkName($data)', e-required) {{db_config.name || 'empty'}}
+                div(class='row') 
+                 div(class='col-md-2') Type:
+                 div(class='col-md-6')
+                   a(href='#', onaftersave='updateDBConfig(db_config)', editable-select='db_config.type', e-ng-options='type as type for type in types', e-required) {{db_config.type || 'empty'}}
+                div(class='row') 
+                 div(class='col-md-2') Host:
+                 div(class='col-md-6')
+                   a(href='#', onaftersave='updateDBConfig(db_config)', editable-text='db_config.host', e-style='width:300px;', e-required) {{db_config.host || 'empty'}}
+                div(class='row') 
+                 div(class='col-md-2') User:
+                 div(class='col-md-6')
+                   a(href='#', onaftersave='updateDBConfig(db_config)', editable-text='db_config.user', e-style='width:200px;', e-required) {{db_config.user || 'empty'}}
+                div(class='row') 
+                 div(class='col-md-2') Password:
+                 div(class='col-md-6')
+                   a(href='#', onbeforesave='updateDBConfig(db_config)', editable-text='db_config.password', e-type='password', e-style='width:200px;', e-required) xxxxxx
+          form(editable-form name='db_config_form' onbeforesave='addDBConfig()', ng-show='db_config_form.$visible', class='form-horizontal')
+            div(class='panel panel-default')
+              div(class='panel-body')
+                div(class='form-group')
+                  label(class='col-sm-2 control-label') Name:
+                  div(class='col-sm-6', ng-class="{'has-error': db_config_form.name.$invalid}")
+                    input(ng-model='db_config.name', name='name', type='text', class='form-control input-sm', ui-validate=' "validateName($value)" ', required)
+                div(class='form-group')
+                  label(class='col-sm-2 control-label') Type:
+                  div(class='col-sm-6')
+                    select(ng-model='db_config.type', ng-options='type as type for type in types', class='form-control input-sm', required)
+                      option(value='') Choose DB Type
+                div(class='form-group')
+                  label(class='col-sm-2 control-label') Host:
+                  div(class='col-sm-6')
+                    input(ng-model='db_config.host', type='text', class='form-control input-sm', required)
+                div(class='form-group')
+                  label(class='col-sm-2 control-label') User:
+                  div(class='col-sm-6')
+                    input(ng-model='db_config.user', type='text', class='form-control input-sm', required)
+                div(class='form-group')
+                  label(class='col-sm-2 control-label') Password:
+                  div(class='col-sm-6')
+                    input(ng-model='db_config.password', type='password', class='form-control input-sm', required)
+                div(class='form-group')
+                  div(class='col-sm-2')  
+                  div(class='col-md-6 btn-toolbar')
+                    button(type='submit', class='btn btn-primary', ng-disabled='db_config_form.$invalid')
+                      span(class='glyphicon glyphicon-ok')
+                      |  Save
+                    button(type='button', class='btn btn-danger', ng-click='db_config_form.$cancel()', ng-disabled='db_config_form.$waiting')
+                      span(class='glyphicon glyphicon-remove')
+                      |  Cancel
+
+        div(class='modal-footer')
+          button(class='btn btn-primary', ng-click='db_config_form.$show()', ng-hide='db_config_form.$visible')
+            span(class='glyphicon glyphicon-plus-sign')
+            |  Add
+
+
+  // flight_modal
+  div(class='modal fade', id='flight_modal', tab-index='-1', role='dialog', aria-labelledby='flight_modal_label', aria-hidden='true')
+    div(class='modal-dialog modal-lg', ng-controller='flight-controller')
+      div(class='modal-content')
+
+        div(class='modal-header')
+          button(type='button', class='close', data-dismiss='modal', aria-hidden='true') &times;
+          h4(class='modal-title', id='flight_modal_label') Flight Schedules
+
+        div(class='modal-body')
+          table(class='table table-striped table-bordered table-hover table-condensed')
+            thead
+              tr(style='font-weight: bold')
+                th 
+                  a(href='#', ng-click='orderByField="db_config"; reverseSort = !reverseSort')
+                    | DB config
+                    span(ng-show="orderByField == 'db_config'")
+                      span(ng-show="!reverseSort")  ^
+                      span(ng-show="reverseSort")  v
+                th
+                  a(href='#', ng-click='orderByField="schema"; reverseSort = !reverseSort')
+                    | Database/ Schema
+                    span(ng-show="orderByField == 'schema'")
+                      span(ng-show="!reverseSort")  ^
+                      span(ng-show="reverseSort")  v
+                th 
+                  a(href='#', ng-click='orderByField="table"; reverseSort = !reverseSort')
+                    | Table
+                    span(ng-show="orderByField == 'table'")
+                      span(ng-show="!reverseSort")  ^
+                      span(ng-show="reverseSort")  v
+                th Time Field
+                th Group Type
+                th(data-defaultsort='disabled') Edit
+            tbody
+              tr(ng-repeat='flight in flights | orderBy:orderByField:reverseSort', class='{{flight.status || "default"}}')
+                td(data-value='{{flight.db_config}}')
+                  span(editable-select='flight.db_config', e-ng-options='config as config for config in configs' e-name='db_config', e-form='flight_form', onbeforesave='checkEmpty($data)', e-required) {{flight.db_config || 'empty'}}
+                td(data-value='{{flight.schema}}')
+                  span(editable-text='flight.schema', e-name='schema', e-form='flight_form', onbeforesave='checkEmpty($data)', e-required) {{flight.schema || 'empty'}}
+                td(data-value='{{flight.table}}')
+                  span(editable-text='flight.table', e-name='table', e-form='flight_form', onbeforesave='checkEmpty($data)', e-required) {{flight.table || 'empty'}}
+                td(data-value='{{flight.timefield}}')
+                  span(editable-text='flight.timefield', e-name='timefield', e-form='flight_form', onbeforesave='checkEmpty($data)', e-required) {{flight.timefield || 'empty'}}
+                td(data-value='{{flight.freq}}')
+                  span(editable-select='flight.freq', e-ng-options='freq as freq for freq in freqs', e-name='freq', e-form='flight_form', onbeforesave='checkEmpty($data)', e-required) {{flight.freq || 'empty'}}
+                td
+                  form(editable-form, name='flight_form', onbeforesave='updateFlight(flight)', ng-show='flight_form.$visible', class='form-buttons form-inline btn-toolbar', shown='inserted == flight')
+                    button(type='submit', ng-disabled='flight_form.$invalid', class='btn btn-success btn-sm')
+                      span(class='glyphicon glyphicon-ok')
+                    button(type='button', ng-disabled='flight_form.$waiting', class='btn btn-default btn-sm', ng-click='flight_form.$cancel(); cancelChange(flight)')
+                      span(class='glyphicon glyphicon-remove')
+                  div(class='btn-toolbar', ng-show='!flight_form.$visible')
+                    button(class='btn btn-primary btn-sm', ng-click='flight_form.$show()')
+                      span(class='glyphicon glyphicon-pencil')
+                    button(class='btn btn-default btn-sm', ng-click='deleteFlight(flight)')
+                      span(class='glyphicon glyphicon-trash')
+
+        div(class='modal-footer')
+          button(class='btn btn-primary', ng-click='addFlight()')
+            span(class='glyphicon glyphicon-plus-sign')
+            |  Add
+
+  script(type='text/javascript').
+    $('#db_config_modal_btn').click(function() {
+        $('#db_config_modal').modal();
+    });
+    $('#flight_modal_btn').click(function() {
+        $('#flight_modal').modal();
+    });
+    Highcharts.setOptions({global : {useUTC: false}});

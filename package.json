@@ -1,0 +1,24 @@
+{
+  "name": "data_glider",
+  "version": "0.0.1",
+  "description": "Visualize time series data counts in MySQL and Vertica",
+  "private": true,
+  "author": "Wen-Hao Lee <wing3s@gmail.com>",
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "express": "~4.2.0",
+    "static-favicon": "~1.0.0",
+    "morgan": "~1.0.0",
+    "cookie-parser": "~1.0.1",
+    "body-parser": "~1.0.0",
+    "debug": "~0.7.4",
+    "jade": "~1.3.0",
+    "stylus": "0.42.3",
+    "mysql": "~2.3.0",
+    "vertica": "0.5.1",
+    "nstore": "0.5.2"
+  },
+  "licnese": "MIT"
+}
