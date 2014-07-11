@@ -8,6 +8,8 @@ Data Glider is a data monitoring tool which enables quick visualization of time 
   - Adjustable refresh rate and lookback window
   - No need to set up additional database 
 
+![alt tag](http://i.imgur.com/rvZKy2c.png)
+
 
 Version
 ----
