@@ -40,13 +40,12 @@ apt-get install npm
 
 For Mac users:
 
-Using [Homebrew]
+Usw [Homebrew]
 ```sh
 brew install node
 brew install npm
 ```
-
-or using [Macports]
+or [Macports]
 ```sh
 port install nodejs
 port install npm
