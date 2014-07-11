@@ -27,16 +27,31 @@ Data Glider uses a number of open source projects:
 * [node.js] - software platform for scalable server-side and networking applications
 * [Express] - fast node.js network app framework
 
-Prerequest
+Pre-requisite
 --------------
 - [node.js](http://nodejs.org/download/)
 - [npm](https://github.com/npm/npm)
 
-In Ubuntu:
+For users using Ubuntu:
 ```sh
 apt-get install nodejs
 apt-get install npm
 ```
+
+For Mac users:
+
+Using [Homebrew]
+```sh
+brew install node
+brew install npm
+```
+
+or using [Macports]
+```sh
+port install nodejs
+port install npm
+```
+
 
 Quick Start
 --------------
@@ -60,3 +75,5 @@ MIT
 [node.js]:http://nodejs.org
 [Bootstrap]:http://twitter.github.com/bootstrap/
 [express]:http://expressjs.com
+[Macports]:http://www.macports.org/
+[Homebrew]:http://mxcl.github.com/homebrew/
