@@ -1,14 +1,15 @@
 Data Glider
 =========
 
-Data Glider is a data monitoring tool which enables quick visualization of time series data.
+Data Glider is a real-time data monitoring system which enables users to identify and resolve data pipeline problems before they affect business processes. Data Glider provides easy access to visualization of time-series data in databases.
 
-  - Group data daily or hourly
+  - Examine data as daily or hourly
   - Support MySQL and Vertica databases
   - Adjustable refresh rate and lookback window
+  - Status dashboard for target database connections
   - No need to set up additional database 
 
-![alt tag](http://i.imgur.com/rvZKy2c.png)
+![alt tag](http://i.imgur.com/n9qSCHl.png)
 
 
 Version
@@ -27,7 +28,7 @@ Data Glider uses a number of open source projects:
 * [node.js] - software platform for scalable server-side and networking applications
 * [Express] - fast node.js network app framework
 
-Pre-requisite
+Requirements
 --------------
 - [node.js](http://nodejs.org/download/)
 - [npm](https://github.com/npm/npm)
@@ -40,13 +41,12 @@ apt-get install npm
 
 For Mac users:
 
-Usw [Homebrew]
+
 ```sh
+\\ Use Homebrew
 brew install node
 brew install npm
-```
-or [Macports]
-```sh
+\\ or Macports
 port install nodejs
 port install npm
 ```
@@ -74,5 +74,3 @@ MIT
 [node.js]:http://nodejs.org
 [Bootstrap]:http://twitter.github.com/bootstrap/
 [express]:http://expressjs.com
-[Macports]:http://www.macports.org/
-[Homebrew]:http://mxcl.github.com/homebrew/
