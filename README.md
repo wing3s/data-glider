@@ -43,10 +43,10 @@ For Mac users:
 
 
 ```sh
-\\ Use Homebrew
+// Use Homebrew
 brew install node
 brew install npm
-\\ or Macports
+// or Macports
 port install nodejs
 port install npm
 ```
