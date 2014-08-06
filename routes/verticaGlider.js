@@ -31,6 +31,7 @@ VerticaConn.prototype.test = function(req, res) {
     var timefield = req.params.timefield;
     var query = "SELECT 1 val FROM "+schema+"."+table+" WHERE "+timefield+" IS NOT NULL LIMIT 1";
     this.conn.query(query, function(err, resultset) {
+        this.commit();
         if (err) {
             res.send({'error': err});
             return;
@@ -54,6 +55,7 @@ VerticaConn.prototype.touch = function(req, res) {
     }, conn_time_limit);
     var query = "SELECT 1 as val";
     this.conn.query(query, function(err, resultset) {
+        this.commit();
         if (err) {
             res.send({'error': err});
             return;
@@ -85,6 +87,7 @@ VerticaConn.prototype.hourlyCount = function (req, res) {
                 "GROUP BY TRUNC("+timefield+", 'HH') " +
                 "ORDER BY TRUNC("+timefield+", 'HH') ";
     this.conn.query(query, function(err, resultset) {
+        this.commit();
         if (err) {
             res.send({error: err});
             return;
@@ -121,6 +124,7 @@ VerticaConn.prototype.dailyCount = function (req, res) {
                 "GROUP BY TRUNC("+timefield+", 'DD') " +
                 "ORDER BY TRUNC("+timefield+", 'DD') ";
     this.conn.query(query, function(err, resultset) {
+        this.commit();
         if (err) {
             res.send({error: err});
             return;
@@ -136,6 +140,14 @@ VerticaConn.prototype.dailyCount = function (req, res) {
             rows.push([cursorDay, null]);
         }
         res.send(rows);
+    });
+};
+
+VerticaConn.prototype.commit = function(){
+    this.conn.query("COMMIT", function(err, resultset) {
+        if (err) {
+            console.error(err);
+        }
     });
 };
 
