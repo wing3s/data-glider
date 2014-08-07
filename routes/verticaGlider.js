@@ -29,9 +29,8 @@ VerticaConn.prototype.test = function(req, res) {
     var schema    = req.params.schema;
     var table     = req.params.table;
     var timefield = req.params.timefield;
-    var query = "SELECT 1 val FROM "+schema+"."+table+" WHERE "+timefield+" IS NOT NULL LIMIT 1";
+    var query = "SELECT 1 val FROM "+schema+"."+table+" WHERE "+timefield+" IS NOT NULL LIMIT 1; COMMIT;";
     this.conn.query(query, function(err, resultset) {
-        this.commit();
         if (err) {
             res.send({'error': err});
             return;
@@ -53,9 +52,8 @@ VerticaConn.prototype.touch = function(req, res) {
         }
         return;
     }, conn_time_limit);
-    var query = "SELECT 1 as val";
+    var query = "SELECT 1 as val; COMMIT;";
     this.conn.query(query, function(err, resultset) {
-        this.commit();
         if (err) {
             res.send({'error': err});
             return;
@@ -85,9 +83,8 @@ VerticaConn.prototype.hourlyCount = function (req, res) {
                 "FROM "+schema+"."+table+" " +
                 "WHERE "+timefield+" >= TRUNC(TIMESTAMPADD(hour, -"+range+", NOW()), 'HH') " +
                 "GROUP BY TRUNC("+timefield+", 'HH') " +
-                "ORDER BY TRUNC("+timefield+", 'HH') ";
+                "ORDER BY TRUNC("+timefield+", 'HH') ; COMMIT;";
     this.conn.query(query, function(err, resultset) {
-        this.commit();
         if (err) {
             res.send({error: err});
             return;
@@ -122,9 +119,8 @@ VerticaConn.prototype.dailyCount = function (req, res) {
                 "FROM "+schema+"."+table+" " +
                 "WHERE "+timefield+" >= TRUNC(TIMESTAMPADD(day, -"+range+", NOW()), 'DD') "+
                 "GROUP BY TRUNC("+timefield+", 'DD') " +
-                "ORDER BY TRUNC("+timefield+", 'DD') ";
+                "ORDER BY TRUNC("+timefield+", 'DD') ; COMMIT;";
     this.conn.query(query, function(err, resultset) {
-        this.commit();
         if (err) {
             res.send({error: err});
             return;
@@ -140,14 +136,6 @@ VerticaConn.prototype.dailyCount = function (req, res) {
             rows.push([cursorDay, null]);
         }
         res.send(rows);
-    });
-};
-
-VerticaConn.prototype.commit = function(){
-    this.conn.query("COMMIT", function(err, resultset) {
-        if (err) {
-            console.error(err);
-        }
     });
 };
 
