@@ -34,7 +34,7 @@ block content
             a(href='#schema_{{db_config}}{{schema}}', data-toggle='tab')  {{schema}}
         div(id='schema_{{db_config}}_content', class='tab-content')
           div(class='row tab-pane fade', id='schema_{{db_config}}{{schema}}', ng-class='{active: $first, in: $first}', ng-repeat='(schema, flights) in schemas')
-            gliderchart(flight='flight', ng-repeat='flight in flights track by $index', class='col-md-6')
+            gliderchart(flight='flight', ng-repeat='flight in flights | orderBy:"table" track by $index ', class='col-md-6')
 
   // db_config_modal
   div(class='modal fade', id='db_config_modal', tab-index='-1', role='dialog', aria-labelledby='db_config_modal_label', aria-hidden='true')
