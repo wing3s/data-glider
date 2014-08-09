@@ -36,10 +36,14 @@ VerticaConn.prototype.test = function(req, res) {
             return;
         }
         var rows = resultset.rows;
-        if (rows[0][0] === 1) {
-            res.send({success: 1});
+        if (rows[0]) {
+            if (rows[0][0] === 1) {
+                res.send({success: 1});
+            } else {
+                res.send({error: 'returned ' + rows[0][0]});
+            }
         } else {
-            res.send({error: 'returned ' + rows[0][0]});
+            res.send({error: 'returned' + rows[0]});
         }
     });
 };
@@ -59,10 +63,14 @@ VerticaConn.prototype.touch = function(req, res) {
             return;
         }
         var rows = resultset.rows;
-        if (rows[0][0] === 1) {
-            res.send({success: 1});
+        if (rows[0]) {
+            if (rows[0][0] === 1) {
+                res.send({success: 1});
+            } else {
+                res.send({error: 'returned ' + rows[0][0]});
+            }
         } else {
-            res.send({error: 'returned ' + rows[0][0]});
+            res.send({error: 'returned' + rows[0]});
         }
     });
 };
