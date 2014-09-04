@@ -75,6 +75,36 @@ VerticaConn.prototype.touch = function(req, res) {
     });
 };
 
+VerticaConn.prototype.spaceUsage = function(req, res) {
+    var conn_err = this.getConnErr;
+    setTimeout(function() {
+        if (conn_err()) {
+            res.send({error:conn_err()});
+        }
+        return;
+    }, conn_time_limit);
+    var unitSize = req.params.unitSize || 'MB';
+    var sizeMap = {
+        KB : 1024,
+        MB : 1024*1024,
+        GB : 1024*1024*1024
+    };
+    var query = "SELECT anchor_table_schema as schema," +
+                "       anchor_table_name as table," +
+                "       ROUND(SUM(used_bytes/(" + sizeMap[unitSize] + ")), 1.0) AS usage " +
+                "FROM column_storage " +
+                "GROUP BY anchor_table_schema, anchor_table_name " +
+                "ORDER BY anchor_table_schema, anchor_table_name;";
+    this.conn.query(query, function(err, resultset) {
+        if (err) {
+            res.send({'error': err});
+            return;
+        }
+        var rows = resultset.rows;
+        res.send(rows);
+    });
+};
+
 VerticaConn.prototype.hourlyCount = function (req, res) {
     var conn_err = this.getConnErr;
     setTimeout(function() {

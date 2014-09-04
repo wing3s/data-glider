@@ -21,6 +21,15 @@ exports.query = function query(req, res) {
     }
 };
 
+exports.spaceUsage = function spaceUsage(req, res) {
+    var name = req.params.db_config;
+    if (conns[name]) {
+        conns[name].spaceUsage(req, res);
+    } else {
+        establishConn(req, res, spaceUsage);
+    }
+};
+
 exports.test = function test(req, res) {
     var name = req.params.db_config;
     if (conns[name]) {

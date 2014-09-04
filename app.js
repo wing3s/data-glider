@@ -30,6 +30,7 @@ app.get('/db_handler/query/:db_config/:freq/:schema/:table/:timefield/:range', d
 app.get('/db_handler/test/:db_config/:freq/:schema/:table/:timefield', dbHandler.test);
 app.get('/db_handler/touch/:db_config', dbHandler.touch);
 app.get('/db_handler/reset/:db_config', dbHandler.resetConn);
+app.get('/db_handler/spaceUsage/:db_config/:unitSize', dbHandler.spaceUsage);
 
 app.get('/flights', flights.findAll);
 app.get('/flights/:id', flights.findByID);
