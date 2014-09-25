@@ -11,8 +11,8 @@ function getTimeZone() {
     return /\((.*)\)/.exec(new Date().toString())[1];
 }
 
-function getChartOptions(target, freq, schema, table, timefield) {
-    options = {
+function getColumnChartOptions(target, freq, schema, table, timefield) {
+    var options = {
         chart: {
             renderTo: target,
             type: 'column'
@@ -74,5 +74,50 @@ function getChartOptions(target, freq, schema, table, timefield) {
     } else {
         options.colors = ['#a5aad9'];
     }
+    return options;
+}
+
+function getPieChartOptions(target, db_config, unitSize) {
+    var options = {
+        chart: {
+            renderTo: target,
+            type: 'pie'
+        },
+        title: {
+            text: db_config + ' Space Usage'
+        },
+        plotOptions: {
+            pie: {
+                shadow: false,
+                center: ['50%', '50%']
+            }
+        },
+        tooltip: {
+            valueSuffix: unitSize
+        },
+        series: [{
+            name: 'Schema/Database',
+            // data: schemaData,
+            size: '60%',
+            dataLabels: {
+                formatter: function () {
+                    return this.y > 5 ? this.point.name : null;
+                },
+                color: 'white',
+                distance: -30
+            }
+        }, {
+            name: 'Table',
+            // data: tableData,
+            size: '80%',
+            innerSize: '60%',
+            dataLabels: {
+                formatter: function () {
+                    // display only if larger than 1
+                    return this.y > 1 ? '<b>' + this.point.name + ':</b> ' + this.y + '%'  : null;
+                }
+            }
+        }]
+    };
     return options;
 }
