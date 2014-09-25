@@ -1,4 +1,4 @@
-app.directive('gliderchart', function(UpdateFreqService, RangeService) {
+app.directive('gliderchart', function(RowChartService, UpdateFreqService, RangeService, $timeout) {
     return {
         restrict: 'E',
         replace: true,
@@ -6,7 +6,7 @@ app.directive('gliderchart', function(UpdateFreqService, RangeService) {
         scope: {
             flight: '=',
         },
-        template: '<div id="chart_{{flight.db_config}}{{flight.schema}}{{flight.table}}{{flight.timefield}}" class="col-md-6"> </div>',
+        template: '<div id="chart_{{flight.db_config}}{{flight.schema}}{{flight.table}}{{flight.timefield}}" class="col-md-{{chart_width}}"> </div>',
         link: function(scope, element) {
             if (!scope.flight) {
                 element.remove();
@@ -18,6 +18,8 @@ app.directive('gliderchart', function(UpdateFreqService, RangeService) {
                 scope.flight.updateFreq = UpdateFreqService.getVal();
                 scope.flight.range      = RangeService.getVal();
             });
+            scope.chart_width = 12/RowChartService.getVal();
+
             scope.$watch('flight', function() {
                 if (scope.autoLoad) {
                     clearTimeout(scope.autoLoad);
@@ -34,6 +36,16 @@ app.directive('gliderchart', function(UpdateFreqService, RangeService) {
                 var options    = getColumnChartOptions(chartContainerID, freq, schema, table, timefield);
                 var chart      = new Highcharts.Chart(options);
                 var ajax_url   = [api_url, db_config, freq, schema, table, timefield, range].join('/');
+
+                scope.$watch(function() {
+                    return RowChartService.getIndex();
+                }, function(newVal, oldVal) {
+                    scope.chart_width = 12/RowChartService.getVal();
+                    $timeout(function() {
+                        chart.reflow();
+                    }, 1);
+                });
+
                 (function autoLoad() {
                     chart.showLoading();
                     $.ajax({
@@ -118,7 +130,7 @@ app.directive('spaceusagechart', function(UpdateFreqService) {
                                     resp: resp
                                 });
                             } else {
-                                console.log(resp);
+                                // console.log(resp);
                                 // HighchartsColors
                                 // if (chart.series) {
                                 //     chart.series[0].setData(resp);

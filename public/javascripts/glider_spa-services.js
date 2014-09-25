@@ -12,6 +12,32 @@ app.factory('FlightService', function($resource) {
     return Flights;
 });
 
+app.factory('RowChartService', function($rootScope) {
+    var rowCharts = [1, 2, 4, 6, 12];
+    var index = 1;
+    var rowChartService = {
+        getVal: function(inputIndex) {
+            if (typeof inputIndex === 'undefined') {
+                return rowCharts[index];
+            } else {
+                return rowCharts[inputIndex];
+            }
+        },
+        getIndex: function() {
+            return index;
+        },
+        setIndex: function(inputIndex) {
+            $rootScope.$apply(function(){
+                index = inputIndex;
+            });
+        },
+        getLen: function() {
+            return rowCharts.length;
+        }
+    };
+    return rowChartService;
+});
+
 app.factory('UpdateFreqService', function($rootScope) {
     var updateFreqs = [1, 3, 5, 10, 20];
     var index = 1;
